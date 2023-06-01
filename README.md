@@ -1,4 +1,9 @@
-[![rustc](https://img.shields.io/badge/rustc-nightly-lightgrey)](https://doc.rust-lang.org/nightly/std/)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE-MIT)
+[![Apache 2.0 license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE-APACHE)
+[![Docs](https://img.shields.io/docsrs/ndim)](https://docs.rs/ndim)
+[![Downloads](https://img.shields.io/crates/d/ndim)](https://crates.io/crates/ndim)
+[![Latest crates.io](https://img.shields.io/crates/v/ndim)](https://crates.io/crates/ndim)
+
 
 A pure Rust library for manipulating multi-dimensional coordinates.
 

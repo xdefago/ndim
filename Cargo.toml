@@ -3,6 +3,9 @@ name = "ndim"
 version = "0.0.1"
 edition = "2021"
 
+repository = "https://github.com/xdefago/ndim"
+documentation = "https://docs.rs/ndim/"
+
 authors = ["xdefago"]
 
 readme = "README.md"
@@ -20,6 +23,8 @@ categories = ["mathematics", "graphics", "geometry", "science"]
 default = []
 approx = ["dep:approx"]
 experimental = [] # requires rust nightly
+
+
 
 [dependencies]
 
