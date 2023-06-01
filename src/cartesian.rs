@@ -73,6 +73,58 @@ impl<T: Float, const N: usize> Cartesian<T, N> {
 
 impl<T, const N: usize> Cartesian<T, N>
 where
+    T: Zero + PartialEq
+{
+    pub fn is_zero(&self) -> bool {
+        for i in 0..N {
+            if self.coordinates[i] != T::zero() {
+                return false;
+            }
+        }
+        true
+    }
+}
+
+impl<T, const N: usize> Cartesian<T, N>
+where
+    T: Zero + Copy
+{
+    pub fn zero() -> Self {
+        Self { coordinates: [T::zero(); N] }
+    }
+}
+
+impl<T, const N: usize> Cartesian<T, N>
+where
+    T: Float,
+{
+    ///
+    /// Returns true if all of the coordinates are finite.
+    /// 
+    pub fn is_finite(&self) -> bool {
+        for i in 0..N {
+            if !self.coordinates[i].is_finite() {
+                return false;
+            }
+        }
+        true
+    }
+
+    ///
+    /// Returns true if any of the coordinates is NaN.
+    /// 
+    pub fn is_nan(&self) -> bool {
+        for i in 0..N {
+            if self.coordinates[i].is_nan() {
+                return true;
+            }
+        }
+        false
+    }
+}
+
+impl<T, const N: usize> Cartesian<T, N>
+where
     T: Num + Copy,
 {
     pub fn dot_product(&self, rhs: Self) -> T {
@@ -588,6 +640,42 @@ mod tests {
 
         assert_eq!(c3.z(), 3);
         assert_eq!(c4.z(), 3);
+    }
+
+    #[test]
+    fn test_zero() {
+        let zero = Cartesian::zero();
+        assert_eq!(zero, Cartesian::new([0, 0, 0]));
+        assert!(zero.is_zero());
+
+        let zero = Cartesian::zero();
+        assert_eq!(zero, Cartesian::new([0., 0., 0.]));   
+        assert!(zero.is_zero());   
+        assert!(zero.is_finite());
+        assert!(! zero.is_nan());
+    }
+
+    #[test]
+    fn test_nan() {
+        let c = Cartesian::new([1.0, 2.0, 3.0]);
+        assert!(c.is_finite());
+        assert!(! c.is_nan());
+
+        let c = Cartesian::new([1.0, 2.0, std::f64::NAN]);
+        assert!(! c.is_finite());
+        assert!(c.is_nan());
+
+        let c = Cartesian::new([1.0, 2.0, std::f32::NAN]);
+        assert!(! c.is_finite());
+        assert!(c.is_nan());
+
+        let c = Cartesian::new([1.0, 2.0, std::f64::INFINITY]);
+        assert!(! c.is_finite());
+        assert!(! c.is_nan());
+
+        let c = Cartesian::new([1.0, 2.0, std::f32::INFINITY]);
+        assert!(! c.is_finite());
+        assert!(! c.is_nan());
     }
 
     #[test]
