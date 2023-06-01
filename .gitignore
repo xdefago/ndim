@@ -1,0 +1,17 @@
+/target
+/Cargo.lock
+
+# Apple guano
+.DS_Store
+# Windows guano
+Thumbs.db
+# Vim guano
+*.swp
+*.swo
+*.swn
+# Emacs guano
+*~
+# Jetbrains guano
+.idea
+# Visual Studio Code guano
+.vscode
