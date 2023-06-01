@@ -5,6 +5,14 @@ edition = "2021"
 
 authors = ["xdefago"]
 
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+
+description = "A pure Rust library for manipulating multi-dimensional coordinates."
+keywords = ["math", "geometry", "coordinates", "vector", "graphics"]
+categories = ["mathematics", "graphics", "geometry", "science"]
+
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
