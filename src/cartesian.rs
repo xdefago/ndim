@@ -1,18 +1,21 @@
 use num_traits::*;
+use std::ops::{
+    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+};
 
 ///
 /// Represent coordinates in an N-dimensional space.
-/// 
-/// 
+///
+///
 /// # Examples
-/// 
+///
 /// ```
 /// use ndim::Cartesian;
-/// 
+///
 /// let c = Cartesian::new([1, 2, 3]);
 /// assert_eq!(c.coordinates, [1, 2, 3]);
 /// assert_eq!(c.dim(), 3);
-/// 
+///
 /// let c = Cartesian::new([1.5, 2.8, 3.7, 4.9]);
 /// assert_eq!(c.coordinates, [1.5, 2.8, 3.7, 4.9]);
 /// assert_eq!(c.dim(), 4);
@@ -38,16 +41,16 @@ where
 impl<T, const N: usize> Cartesian<T, N> {
     ///
     /// Create a new coordinate with the given components.
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `coordinates` - The components of the coordinate as a slice.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use ndim::Cartesian;
-    /// 
+    ///
     /// let c = Cartesian::new([1, 2, 3]);
     /// assert_eq!(c.coordinates, [1, 2, 3]);
     /// assert_eq!(c.dim(), 3);
@@ -59,7 +62,7 @@ impl<T, const N: usize> Cartesian<T, N> {
 
     ///
     /// Returns the number of dimensions of the space.
-    /// 
+    ///
     pub fn dim(&self) -> usize {
         N
     }
@@ -67,7 +70,7 @@ impl<T, const N: usize> Cartesian<T, N> {
     ///
     /// Returns the number of components in the coordinate.
     /// This is synonymous with [`Self::dim`].
-    /// 
+    ///
     pub fn len(&self) -> usize {
         N
     }
@@ -76,20 +79,20 @@ impl<T, const N: usize> Cartesian<T, N> {
 impl<T: PrimInt, const N: usize> Cartesian<T, N> {
     ///
     /// Returns the Manhattan distance from a coordinate to another.
-    /// 
+    ///
     /// The Manhattan distance is defined as the minimum number of steps
     /// from one location to the other when moving only along one dimension
     /// at a time. This is can also be seen as a generalization of the Hamming
     /// distance between the coordinates.
-    /// 
+    ///
     /// It is calculated as the sum of the absolute differences between the
     /// coordinates.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use ndim::Cartesian;
-    /// 
+    ///
     /// let c1 = Cartesian::new([1, 2, 3]);
     /// let c2 = Cartesian::new([0, 0, 0]);
     /// assert_eq!(c1.manhattan_distance(c2), 6);
@@ -106,15 +109,15 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
 
     ///
     /// Returns the Chebyshev distance from a coordinate to another.
-    /// 
+    ///
     /// The Chebyshev distance is defined as the maximum difference between
     /// the coordinates.
     /// In 2D, it corresponds to the minimum number of steps that a king must
     /// take to move between the two squares on a chessboard.
-    /// 
+    ///
     /// ```
     /// use ndim::Cartesian;
-    /// 
+    ///
     /// let c1 = Cartesian::new([1, 2, 3]);
     /// let c2 = Cartesian::new([0, 0, 0]);
     /// assert_eq!(c1.chebyshev_distance(c2), 3);
@@ -135,7 +138,7 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
     ///
     /// Converts the integer coordinate to a corresponding coordinate
     /// with floating point.
-    /// 
+    ///
     pub fn as_float<F: Float>(&self) -> Cartesian<F, N> {
         let mut coordinates = [F::zero(); N];
         for i in 0..N {
@@ -148,20 +151,20 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
 impl<T: Float, const N: usize> Cartesian<T, N> {
     ///
     /// Returns the Euclidean distance from a coordinate to another.
-    /// 
+    ///
     /// The Euclidean distance is defined as the length of the straight
     /// segment from one coordinate to the other, in Euclidean space.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use ndim::Cartesian;
-    /// 
+    ///
     /// let c1 = Cartesian::new([3., 4.]);
     /// let c2 = Cartesian::new([0., 0.]);
     /// assert_eq!(c1.euclidean_distance(c2), 5.);
     /// ```
-    /// 
+    ///
     pub fn euclidean_distance(&self, rhs: Self) -> T {
         let mut sum = T::zero();
         for i in 0..N {
@@ -172,7 +175,7 @@ impl<T: Float, const N: usize> Cartesian<T, N> {
 
     ///
     /// Returns the length of the coordinate.
-    /// 
+    ///
     pub fn norm(&self) -> T {
         self.dot_product(*self).sqrt()
     }
@@ -180,7 +183,7 @@ impl<T: Float, const N: usize> Cartesian<T, N> {
 
 impl<T, const N: usize> Cartesian<T, N>
 where
-    T: Zero + PartialEq
+    T: Zero + PartialEq,
 {
     pub fn is_zero(&self) -> bool {
         for i in 0..N {
@@ -194,14 +197,16 @@ where
 
 impl<T, const N: usize> Cartesian<T, N>
 where
-    T: Zero + Copy
+    T: Zero + Copy,
 {
     ///
     /// Returns a zero (null) coordinate.
-    /// 
+    ///
     pub fn zero() -> Self {
         // TODO: is there any way to get this into a const or a lazy_static??!
-        Self { coordinates: [T::zero(); N] }
+        Self {
+            coordinates: [T::zero(); N],
+        }
     }
 }
 
@@ -211,7 +216,7 @@ where
 {
     ///
     /// Returns true if all of the coordinates are finite.
-    /// 
+    ///
     pub fn is_finite(&self) -> bool {
         for i in 0..N {
             if !self.coordinates[i].is_finite() {
@@ -223,15 +228,15 @@ where
 
     ///
     /// Returns true if any of the coordinates is NaN.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// use ndim::Cartesian;
-    /// 
+    ///
     /// let c = Cartesian::new([0., 1., f64::NAN]);
     /// assert!(c.is_nan());
-    /// 
+    ///
     /// let c = Cartesian::new([0., 1., 3.]);
     /// assert!(! c.is_nan());
     /// ```
@@ -310,8 +315,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::Index<usize> for Cartesian<T, N>
-{
+impl<T, const N: usize> Index<usize> for Cartesian<T, N> {
     type Output = T;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -319,14 +323,13 @@ impl<T, const N: usize> std::ops::Index<usize> for Cartesian<T, N>
     }
 }
 
-impl<T, const N: usize> std::ops::IndexMut<usize> for Cartesian<T, N>
-{
+impl<T, const N: usize> IndexMut<usize> for Cartesian<T, N> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.coordinates[index]
     }
 }
 
-impl<T, const N: usize> std::ops::Add for Cartesian<T, N>
+impl<T, const N: usize> Add for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -341,7 +344,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::AddAssign for Cartesian<T, N>
+impl<T, const N: usize> AddAssign for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -352,7 +355,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::Sub for Cartesian<T, N>
+impl<T, const N: usize> Sub for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -367,7 +370,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::SubAssign for Cartesian<T, N>
+impl<T, const N: usize> SubAssign for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -378,7 +381,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::Mul<T> for Cartesian<T, N>
+impl<T, const N: usize> Mul<T> for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -393,7 +396,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::MulAssign<T> for Cartesian<T, N>
+impl<T, const N: usize> MulAssign<T> for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -404,7 +407,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::Div<T> for Cartesian<T, N>
+impl<T, const N: usize> Div<T> for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -419,7 +422,7 @@ where
     }
 }
 
-impl<T, const N: usize> std::ops::DivAssign<T> for Cartesian<T, N>
+impl<T, const N: usize> DivAssign<T> for Cartesian<T, N>
 where
     T: Num + Copy,
 {
@@ -430,9 +433,9 @@ where
     }
 }
 
-impl<T, U, const N: usize> std::ops::Neg for Cartesian<T, N>
+impl<T, U, const N: usize> Neg for Cartesian<T, N>
 where
-    T: Num + std::ops::Neg<Output = U> + Copy,
+    T: Num + Neg<Output = U> + Copy,
     U: Num + Copy,
 {
     type Output = Cartesian<U, N>;
@@ -456,7 +459,7 @@ impl<T: Copy> From<T> for Cartesian<T, 1> {
 
 impl<T: Copy> From<Cartesian<T, 1>> for (T,) {
     fn from(value: Cartesian<T, 1>) -> Self {
-        (value.x(), )
+        (value.x(),)
     }
 }
 
@@ -771,33 +774,33 @@ mod tests {
         assert!(zero.is_zero());
 
         let zero = Cartesian::zero();
-        assert_eq!(zero, Cartesian::new([0., 0., 0.]));   
-        assert!(zero.is_zero());   
+        assert_eq!(zero, Cartesian::new([0., 0., 0.]));
+        assert!(zero.is_zero());
         assert!(zero.is_finite());
-        assert!(! zero.is_nan());
+        assert!(!zero.is_nan());
     }
 
     #[test]
     fn test_nan() {
         let c = Cartesian::new([1.0, 2.0, 3.0]);
         assert!(c.is_finite());
-        assert!(! c.is_nan());
+        assert!(!c.is_nan());
 
         let c = Cartesian::new([1.0, 2.0, std::f64::NAN]);
-        assert!(! c.is_finite());
+        assert!(!c.is_finite());
         assert!(c.is_nan());
 
         let c = Cartesian::new([1.0, 2.0, std::f32::NAN]);
-        assert!(! c.is_finite());
+        assert!(!c.is_finite());
         assert!(c.is_nan());
 
         let c = Cartesian::new([1.0, 2.0, std::f64::INFINITY]);
-        assert!(! c.is_finite());
-        assert!(! c.is_nan());
+        assert!(!c.is_finite());
+        assert!(!c.is_nan());
 
         let c = Cartesian::new([1.0, 2.0, std::f32::INFINITY]);
-        assert!(! c.is_finite());
-        assert!(! c.is_nan());
+        assert!(!c.is_finite());
+        assert!(!c.is_nan());
     }
 
     #[test]
