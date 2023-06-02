@@ -1,5 +1,22 @@
 use num_traits::*;
 
+///
+/// Represent coordinates in an N-dimensional space.
+/// 
+/// 
+/// # Examples
+/// 
+/// ```
+/// use ndim::Cartesian;
+/// 
+/// let c = Cartesian::new([1, 2, 3]);
+/// assert_eq!(c.coordinates, [1, 2, 3]);
+/// assert_eq!(c.dim(), 3);
+/// 
+/// let c = Cartesian::new([1.5, 2.8, 3.7, 4.9]);
+/// assert_eq!(c.coordinates, [1.5, 2.8, 3.7, 4.9]);
+/// assert_eq!(c.dim(), 4);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Hash)]
 pub struct Cartesian<T, const N: usize> {
     pub coordinates: [T; N],
@@ -19,12 +36,64 @@ where
 }
 
 impl<T, const N: usize> Cartesian<T, N> {
+    ///
+    /// Create a new coordinate with the given components.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `coordinates` - The components of the coordinate as a slice.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use ndim::Cartesian;
+    /// 
+    /// let c = Cartesian::new([1, 2, 3]);
+    /// assert_eq!(c.coordinates, [1, 2, 3]);
+    /// assert_eq!(c.dim(), 3);
+    /// assert_eq!(c.coordinates.len(), c.dim());
+    /// ```
     pub fn new(coordinates: [T; N]) -> Self {
         Self { coordinates }
+    }
+
+    ///
+    /// Returns the number of dimensions of the space.
+    /// 
+    pub fn dim(&self) -> usize {
+        N
+    }
+
+    ///
+    /// Returns the number of components in the coordinate.
+    /// This is synonymous with [`Self::dim`].
+    /// 
+    pub fn len(&self) -> usize {
+        N
     }
 }
 
 impl<T: PrimInt, const N: usize> Cartesian<T, N> {
+    ///
+    /// Returns the Manhattan distance from a coordinate to another.
+    /// 
+    /// The Manhattan distance is defined as the minimum number of steps
+    /// from one location to the other when moving only along one dimension
+    /// at a time. This is can also be seen as a generalization of the Hamming
+    /// distance between the coordinates.
+    /// 
+    /// It is calculated as the sum of the absolute differences between the
+    /// coordinates.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use ndim::Cartesian;
+    /// 
+    /// let c1 = Cartesian::new([1, 2, 3]);
+    /// let c2 = Cartesian::new([0, 0, 0]);
+    /// assert_eq!(c1.manhattan_distance(c2), 6);
+    /// ```
     pub fn manhattan_distance(&self, rhs: Self) -> T {
         let mut sum = T::zero();
         for i in 0..N {
@@ -35,6 +104,21 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
         sum
     }
 
+    ///
+    /// Returns the Chebyshev distance from a coordinate to another.
+    /// 
+    /// The Chebyshev distance is defined as the maximum difference between
+    /// the coordinates.
+    /// In 2D, it corresponds to the minimum number of steps that a king must
+    /// take to move between the two squares on a chessboard.
+    /// 
+    /// ```
+    /// use ndim::Cartesian;
+    /// 
+    /// let c1 = Cartesian::new([1, 2, 3]);
+    /// let c2 = Cartesian::new([0, 0, 0]);
+    /// assert_eq!(c1.chebyshev_distance(c2), 3);
+    /// ```
     pub fn chebyshev_distance(&self, rhs: Self) -> T {
         let mut max = T::zero();
         for i in 0..N {
@@ -48,6 +132,10 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
         max
     }
 
+    ///
+    /// Converts the integer coordinate to a corresponding coordinate
+    /// with floating point.
+    /// 
     pub fn as_float<F: Float>(&self) -> Cartesian<F, N> {
         let mut coordinates = [F::zero(); N];
         for i in 0..N {
@@ -58,6 +146,22 @@ impl<T: PrimInt, const N: usize> Cartesian<T, N> {
 }
 
 impl<T: Float, const N: usize> Cartesian<T, N> {
+    ///
+    /// Returns the Euclidean distance from a coordinate to another.
+    /// 
+    /// The Euclidean distance is defined as the length of the straight
+    /// segment from one coordinate to the other, in Euclidean space.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use ndim::Cartesian;
+    /// 
+    /// let c1 = Cartesian::new([3., 4.]);
+    /// let c2 = Cartesian::new([0., 0.]);
+    /// assert_eq!(c1.euclidean_distance(c2), 5.);
+    /// ```
+    /// 
     pub fn euclidean_distance(&self, rhs: Self) -> T {
         let mut sum = T::zero();
         for i in 0..N {
@@ -66,6 +170,9 @@ impl<T: Float, const N: usize> Cartesian<T, N> {
         sum.sqrt()
     }
 
+    ///
+    /// Returns the length of the coordinate.
+    /// 
     pub fn norm(&self) -> T {
         self.dot_product(*self).sqrt()
     }
@@ -89,7 +196,11 @@ impl<T, const N: usize> Cartesian<T, N>
 where
     T: Zero + Copy
 {
+    ///
+    /// Returns a zero (null) coordinate.
+    /// 
     pub fn zero() -> Self {
+        // TODO: is there any way to get this into a const or a lazy_static??!
         Self { coordinates: [T::zero(); N] }
     }
 }
@@ -113,6 +224,17 @@ where
     ///
     /// Returns true if any of the coordinates is NaN.
     /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use ndim::Cartesian;
+    /// 
+    /// let c = Cartesian::new([0., 1., f64::NAN]);
+    /// assert!(c.is_nan());
+    /// 
+    /// let c = Cartesian::new([0., 1., 3.]);
+    /// assert!(! c.is_nan());
+    /// ```
     pub fn is_nan(&self) -> bool {
         for i in 0..N {
             if self.coordinates[i].is_nan() {
