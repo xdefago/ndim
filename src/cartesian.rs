@@ -336,11 +336,9 @@ where
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        let mut coordinates = [T::zero(); N];
-        for i in 0..N {
-            coordinates[i] = self.coordinates[i] + rhs.coordinates[i];
-        }
-        Self { coordinates }
+        let mut res = self;
+        res += rhs;
+        res
     }
 }
 
@@ -362,11 +360,9 @@ where
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        let mut coordinates = [T::zero(); N];
-        for i in 0..N {
-            coordinates[i] = self.coordinates[i] - rhs.coordinates[i];
-        }
-        Self { coordinates }
+        let mut res = self;
+        res -= rhs;
+        res
     }
 }
 
@@ -388,11 +384,9 @@ where
     type Output = Self;
 
     fn mul(self, rhs: T) -> Self::Output {
-        let mut coordinates = [T::zero(); N];
-        for i in 0..N {
-            coordinates[i] = self.coordinates[i] * rhs;
-        }
-        Self { coordinates }
+        let mut res = self;
+        res *= rhs;
+        res
     }
 }
 
@@ -414,11 +408,9 @@ where
     type Output = Self;
 
     fn div(self, rhs: T) -> Self::Output {
-        let mut coordinates = [T::zero(); N];
-        for i in 0..N {
-            coordinates[i] = self.coordinates[i] / rhs;
-        }
-        Self { coordinates }
+        let mut res = self;
+        res /= rhs;
+        res
     }
 }
 
@@ -673,6 +665,7 @@ mod tests {
         let c1 = Cartesian::new([1, 2, 3]);
         let c2 = Cartesian::new([4, 5, 6]);
         assert_eq!(c1 - c2, Cartesian::new([-3, -3, -3]));
+        assert_eq!(c1.coordinates, [1, 2, 3]);
     }
 
     #[test]
