@@ -1,3 +1,20 @@
+//! # Cartesian coordinates
+//! 
+//! This module defines the [`Cartesian`] struct, which represents a point in
+//! an N-dimensional space.
+//! 
+//! [`Cartesian`]: struct.Cartesian.html
+//! 
+//! # Examples
+//! 
+//! ```
+//! use ndim::Cartesian;
+//! 
+//! let c = Cartesian::new([1, 2, 3]);
+//! assert_eq!(c.coordinates, [1, 2, 3]);
+//! assert_eq!(c.dim(), 3);
+//! ```
+
 use num_traits::*;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
@@ -6,7 +23,95 @@ use std::ops::{
 ///
 /// Represent coordinates in an N-dimensional space.
 ///
-///
+/// The coordinates are stored in an array of length N.
+/// The type of the coordinates is generic but the available methods depend
+/// on the type (see below).
+/// The number of dimensions is a const generic parameter and
+/// hence prevents the use of operations on coordinates with different
+/// number of dimensions.
+/// 
+/// # Type parameters
+/// 
+/// * `T`: The type of the coordinates.
+/// * `N`: The number of dimensions.
+/// 
+/// # Operations
+/// 
+/// The following operations are available for all types:
+/// 
+/// * [`Cartesian::new`]: create a new coordinate.
+/// * [`Cartesian::dim`]: returns the number of dimensions.
+/// * [`Cartesian::len`]: returns the number of components.
+/// * [`Cartesian::index`]: returns the i-th coordinate.
+/// * [`Cartesian::index_mut`]: returns a mutable reference to the i-th coordinate.
+/// 
+/// The following operations are available for all types with the [`Copy`] trait:
+/// 
+/// * [`Cartesian::x`]: returns the x coordinate.
+/// * [`Cartesian::y`]: returns the y coordinate.
+/// * [`Cartesian::z`]: returns the z coordinate.
+/// 
+/// The following operations are available for all _numeric_ types ([`Num`]):
+/// 
+/// * [`Cartesian::zero`]: returns a zero coordinate.
+/// * [`Cartesian::is_zero`]: returns true if all components are zero.
+/// * [`Cartesian::dot_product`]: returns the dot product with another coordinate.
+/// * [`Cartesian::cross_product`]: returns the cross product with another coordinate. (if N=3)
+/// * [`Cartesian::add`]: returns the sum of two coordinates.
+/// * [`Cartesian::add_assign`]: adds another coordinate to the current one.
+/// * [`Cartesian::sub`]: returns the difference of two coordinates.
+/// * [`Cartesian::sub_assign`]: subtracts another coordinate from the current one.
+/// * [`Cartesian::mul`]: returns the product of the coordinate with a scalar.
+/// * [`Cartesian::mul_assign`]: multiplies the coordinate with a scalar.
+/// * [`Cartesian::div`]: returns the quotient of the coordinate with a scalar.
+/// * [`Cartesian::div_assign`]: divides the coordinate with a scalar.
+/// * [`Cartesian::neg`]: returns the negation of the coordinate.
+/// 
+/// The following operations are available for all _float_ types ([`Float`])]):
+/// 
+/// * [`Cartesian::euclidean_distance`]: returns the Euclidean distance to another coordinate.
+/// * [`Cartesian::norm`]: returns the length of the coordinate.
+/// * [`Cartesian::is_finite`]: returns true if all components are finite.
+/// * [`Cartesian::is_nan`]: returns true if any component is NaN.
+/// 
+/// The following operations are available for all _integer_ types ([`PrimInt`]):
+/// 
+/// * [`Cartesian::manhattan_distance`]: returns the Manhattan distance to another coordinate.
+/// * [`Cartesian::chebyshev_distance`]: returns the Chebyshev distance to another coordinate.
+/// * [`Cartesian::as_float`]: converts the coordinate to a coordinate with floating point components.
+/// 
+/// In addition, if the components implement it, the coordinates also implement:
+/// * [`Clone`]
+/// * [`Copy`]
+/// * [`PartialOrd`]
+/// * [`PartialEq`]
+/// * [`Eq`]
+/// * [`core::hash::Hash`]
+/// * [`core::fmt::Debug`]
+/// * [`Default`].
+/// * approximate equality operations (with feature `approx` enabled).
+/// 
+/// # Panics
+/// 
+/// The following operations will panic if the number of dimensions is less
+/// than the required number:
+/// 
+/// * [`Cartesian::x`] required: N >= 1
+/// * [`Cartesian::y`] required: N >= 2
+/// * [`Cartesian::z`] required: N >= 3
+/// 
+/// If the `experimental` feature is enabled, the above methods will only be
+/// available if the number of dimensions is sufficient for them to be defined.
+/// E.g., [`Cartesian::z`] will only be defined for coordinates with 3 or more
+/// dimensions and hence its use will be verified at compile time.
+/// 
+/// # Safety
+/// 
+/// The following operations are unsafe:
+/// 
+/// * [`Cartesian::index`]
+/// * [`Cartesian::index_mut`]
+/// 
 /// # Examples
 ///
 /// ```
