@@ -10,6 +10,11 @@ A pure Rust library for manipulating multi-dimensional coordinates.
 
 _This crate is in a very preliminary stage of development; any version can introduce breaking changes._
 
+## Important
+
+It turns out that all of the functionality that I was thinking to provide with this crate is readily available with the crate [`nalgebra`](https://crates.io/crates/nalgebra). While `nalgebra` does not use generic const parameters for the dimension, it nevertheless supports type-checked statically-sized vectors up to 127 dimensions. 
+
+As a result, I will no longer continue developing this crate and will not register it to crate.io.
 
 ## Crate Features
 
