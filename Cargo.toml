@@ -20,10 +20,10 @@ categories = ["mathematics", "graphics", "geometry", "science"]
 
 [features]
 
-default = []
+default = ["nalgebra"]
 approx = ["dep:approx"]
+nalgebra = ["dep:nalgebra"]
 experimental = [] # requires rust nightly
-
 
 
 [dependencies]
@@ -31,6 +31,7 @@ experimental = [] # requires rust nightly
 num-traits = "0.2.15"
 
 approx = { version = "0.5.1", optional = true }
+nalgebra = { version = "0.32", optional = true }
 cfg-if = "1.0.0"
 
 [dev-dependencies]

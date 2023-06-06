@@ -721,6 +721,56 @@ cfg_if::cfg_if! {
     }
 }
 
+#[cfg(feature = "nalgebra")]
+mod nalgebra {
+    use ::nalgebra::{OVector,Const,Scalar};
+
+    use super::*;
+    impl<T, const N: usize> From<Cartesian<T, N>> for OVector<T, Const<N>> where T: Scalar {
+        fn from(cartesian: Cartesian<T, N>) -> OVector<T, Const<N>> {
+            Self::from_column_slice(&cartesian.coordinates)
+        }
+    }
+
+    impl<T, const N: usize> From<OVector<T, Const<N>>> for Cartesian<T, N> where T: Scalar {
+        fn from(vector: OVector<T, Const<N>>) -> Cartesian<T, N> {
+            Self::new(vector.column(0).into())
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ::nalgebra::{Vector3,Vector4};
+
+        #[test]
+        fn test_from() {
+            let c = Cartesian::new([1, 2, 3]);
+            let v: Vector3<i32> = c.into();
+            assert_eq!(v, Vector3::new(1, 2, 3));
+            let v2: Vector3<i32> = c.into();
+            assert_eq!(v, v2);
+
+            let c = Cartesian::new([1.5, 2.8, 3.7, 4.9]);
+            let v: Vector4<f64> = c.into();
+            assert_eq!(v, Vector4::new(1.5, 2.8, 3.7, 4.9));
+        }
+
+        #[test]
+        fn test_into() {
+            let v = Vector3::new(1, 2, 3);
+            let c: Cartesian<i32, 3> = v.into();
+            assert_eq!(c, Cartesian::new([1, 2, 3]));
+            let c2: Cartesian<i32, 3> = v.into();
+            assert_eq!(c, c2);
+
+            let v = Vector4::new(1.5, 2.8, 3.7, 4.9);
+            let c: Cartesian<f64, 4> = v.into();
+            assert_eq!(c, Cartesian::new([1.5, 2.8, 3.7, 4.9]));
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
