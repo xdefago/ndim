@@ -16,6 +16,7 @@
 //! ```
 
 use num_traits::*;
+use std::fmt::Display;
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
@@ -380,6 +381,19 @@ where
                 self.x() * rhs.y() - self.y() * rhs.x(),
             ],
         }
+    }
+}
+
+impl<T, const N: usize> Display for Cartesian<T, N> where T: Display {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+        for i in 0..N {
+            if i > 0 {
+                write!(f, ", ")?;
+            }
+            write!(f, "{}", self.coordinates[i])?;
+        }
+        write!(f, "]")
     }
 }
 
@@ -1015,5 +1029,17 @@ mod tests {
     fn test_sync() {
         fn assert_sync<T: Sync>() {}
         assert_sync::<Cartesian<f64, 1>>();
+    }
+
+    #[test]
+    fn test_display() {
+        let c = Cartesian::new([1, 2, 3]);
+        assert_eq!(format!("{}", c), "[1, 2, 3]");
+
+        let c = Cartesian::new([1.5, 2.8, 3.7]);
+        assert_eq!(format!("{}", c), "[1.5, 2.8, 3.7]");
+
+        let c = Cartesian::new([1.5]);
+        assert_eq!(format!("{}", c), "[1.5]");
     }
 }
